@@ -52,104 +52,104 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(15),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaY: 15, sigmaX: 15),
-        child: Container(
-          height: widget.maxLines! > 1 ? null : size.width / 8,
-          alignment: Alignment.center,
-          padding: EdgeInsets.only(
-            right: size.width / 30,
-            left: widget.iconPathName != null ? 0 : size.width / 30,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.withValues(alpha: .1),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: TextFormField(
+          validator: widget.validator,
+          maxLines: widget.maxLines,
+          controller: widget.controller,
+          obscureText: widget.isPassword ? _showPassword : false,
+          keyboardType: widget.isEmail
+              ? TextInputType.emailAddress
+              : TextInputType.text,
+          focusNode: _focusNode,
+          readOnly: widget.readOnly,
+          onChanged: widget.onChange,
+          onTap: widget.onTap,
+          onTapOutside: (_) {
+            _focusNode.unfocus();
+          },
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          cursorColor: Colors.white,
+          style: GoogleFonts.poppins(
+            color: Colors.white.withValues(alpha: .8),
+            fontSize: 16, // Added font size for better centering
           ),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: .05),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: TextFormField(
-            validator: widget.validator,
-            maxLines: widget.maxLines,
-            controller: widget.controller,
-            obscureText: widget.isPassword ? _showPassword : false,
-            keyboardType: widget.isEmail
-                ? TextInputType.emailAddress
-                : TextInputType.text,
-            focusNode: _focusNode,
-            readOnly: widget.readOnly,
-            onChanged: widget.onChange,
-            onTap: widget.onTap,
-            onTapOutside: (_) {
-              _focusNode.unfocus();
-            },
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            cursorColor: Colors.white,
-            style: GoogleFonts.poppins(
-              color: Colors.white.withValues(alpha: .8),
-              fontSize: 16, // Added font size for better centering
+          textAlignVertical: TextAlignVertical.center, // Center text vertically
+          decoration: InputDecoration(
+            // Remove all borders and underlines
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.grey),
             ),
-            textAlignVertical:
-                TextAlignVertical.center, // Center text vertically
-            decoration: InputDecoration(
-              // Remove all borders and underlines
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              focusedErrorBorder: InputBorder.none,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.red),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(color: Colors.red),
+            ),
 
-              hintText: widget.hintText,
-              hintStyle: GoogleFonts.poppins(
-                fontSize: 14,
-                color: Colors.white.withValues(alpha: .5),
-              ),
+            hintText: widget.hintText,
+            hintStyle: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.white.withValues(alpha: .5),
+            ),
 
-              // Proper content padding for vertical centering
-              contentPadding: EdgeInsets.symmetric(
-                vertical: size.width / 24, // Adjusted for better centering
-                horizontal: 12,
-              ),
+            // Proper content padding for vertical centering
+            contentPadding: EdgeInsets.symmetric(
+              vertical: size.width / 24, // Adjusted for better centering
+              horizontal: 12,
+            ),
 
-              // Icon padding for better alignment
-              isDense: true,
+            // Icon padding for better alignment
+            isDense: true,
 
-              suffixIcon: widget.isPassword
-                  ? Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: IconButton(
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        onPressed: () {
-                          setState(() {
-                            _showPassword = !_showPassword;
-                          });
-                        },
-                        icon: _showPassword
-                            ? Icon(
-                                Icons.visibility_off_outlined,
-                                color: Colors.white.withValues(alpha: .7),
-                                size: 20,
-                              )
-                            : Icon(
-                                Icons.visibility_outlined,
-                                color: Colors.white.withValues(alpha: .7),
-                                size: 20,
-                              ),
-                      ),
-                    )
-                  : null,
-
-              prefixIcon: widget.iconPathName == null
-                  ? null
-                  : Padding(
-                      padding: const EdgeInsets.only(left: 16, right: 12),
-                      child: SvgPicture.asset(
-                        'assets/${widget.iconPathName}.svg',
-                        width: 20,
-                        height: 20,
-                        fit: BoxFit.scaleDown,
-                      ),
+            suffixIcon: widget.isPassword
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: IconButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      onPressed: () {
+                        setState(() {
+                          _showPassword = !_showPassword;
+                        });
+                      },
+                      icon: _showPassword
+                          ? Icon(
+                              Icons.visibility_off_outlined,
+                              color: Colors.white.withValues(alpha: .7),
+                              size: 20,
+                            )
+                          : Icon(
+                              Icons.visibility_outlined,
+                              color: Colors.white.withValues(alpha: .7),
+                              size: 20,
+                            ),
                     ),
-            ),
+                  )
+                : null,
+
+            prefixIcon: widget.iconPathName == null
+                ? null
+                : Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 12),
+                    child: SvgPicture.asset(
+                      'assets/${widget.iconPathName}.svg',
+                      width: 20,
+                      height: 20,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
           ),
         ),
       ),
