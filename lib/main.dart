@@ -1,4 +1,4 @@
-import 'package:animated_login/screens/home_screen.dart';
+import 'package:animated_login/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,7 +12,8 @@ class AnimatedLogin extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      routes: {HomeScreen.routeName: (context) => HomeScreen()},
+      initialRoute: LoginScreen.routeName,
+      routes: {LoginScreen.routeName: (context) => LoginScreen()},
     );
   }
 }
