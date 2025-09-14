@@ -1,3 +1,4 @@
+import 'package:animated_login/onboarding/onboarding_scree.dart';
 import 'package:animated_login/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class AnimatedLogin extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AuthScreen.routeName,
+      initialRoute: OnboardingScreen.routeName,
       theme: ThemeData(
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
@@ -23,7 +24,10 @@ class AnimatedLogin extends StatelessWidget {
           ),
         ),
       ),
-      routes: {AuthScreen.routeName: (context) => AuthScreen()},
+      routes: {
+        AuthScreen.routeName: (context) => AuthScreen(),
+        OnboardingScreen.routeName: (context) => OnboardingScreen(),
+      },
     );
   }
 }
