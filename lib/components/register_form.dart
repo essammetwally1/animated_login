@@ -1,10 +1,8 @@
 import 'package:animated_login/components/custom_elevetedbutton.dart';
 import 'package:animated_login/components/custom_textfeild.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
-class LoginForm extends StatefulWidget {
+class RegisterForm extends StatefulWidget {
   final TextEditingController? usernameController;
   final TextEditingController? emailController;
   final TextEditingController? passwordController;
@@ -12,9 +10,8 @@ class LoginForm extends StatefulWidget {
   final VoidCallback? onForgotPasswordPressed;
   final VoidCallback? onCreateAccountPressed;
   final Function(bool)? move;
-  final bool isLoading;
 
-  const LoginForm({
+  const RegisterForm({
     super.key,
     this.usernameController,
     this.emailController,
@@ -22,19 +19,21 @@ class LoginForm extends StatefulWidget {
     this.onLoginPressed,
     this.onForgotPasswordPressed,
     this.onCreateAccountPressed,
-    this.isLoading = false,
     this.move,
   });
 
   @override
-  State<LoginForm> createState() => _LoginFormState();
+  State<RegisterForm> createState() => _RegisterFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _RegisterFormState extends State<RegisterForm> {
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -82,16 +81,25 @@ class _LoginFormState extends State<LoginForm> {
 
           // Password Field
           CustomTextField(
+            controller: passwordController,
+            hintText: 'Password',
             iconPathName: 'password',
-            hintText: 'Enter your password',
             isPassword: true,
-            isEmail: false,
-            controller: widget.passwordController,
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Enter password';
               } else if (value.length < 9) {
-                return 'Enter valid password -more than 9 letters-';
+                return 'Password must be at least 9 characters';
+              } else if (!RegExp(r'^(?=.*[a-z])').hasMatch(value)) {
+                return 'Password must contain lowercase letter';
+              } else if (!RegExp(r'^(?=.*[A-Z])').hasMatch(value)) {
+                return 'Password must contain uppercase letter';
+              } else if (!RegExp(r'^(?=.*[0-9])').hasMatch(value)) {
+                return 'Password must contain number';
+              } else if (!RegExp(
+                r'^(?=.*[!@#$%^&*(),.?":{}|<>])',
+              ).hasMatch(value)) {
+                return 'Password must contain special character';
               } else {
                 return null;
               }
@@ -100,76 +108,84 @@ class _LoginFormState extends State<LoginForm> {
 
           SizedBox(height: 24),
 
-          // Login & Forgot Password Buttons Row
+          // confirm password Field
+          CustomTextField(
+            controller: confirmPasswordController,
+            hintText: 'Confirm Password',
+            iconPathName: 'password',
+            isPassword: true,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Enter confirm password';
+              } else if (value != passwordController.text) {
+                return 'Passwords do not match';
+              } else {
+                return null;
+              }
+            },
+          ),
+
+          SizedBox(height: 24),
+          // phone number Field
+          CustomTextField(
+            controller: phoneController,
+            hintText: 'Phone Number',
+            iconPathName: 'phone',
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Enter phone number';
+              } else if (!value.startsWith('+2')) {
+                return 'Phone number must start with +2';
+              } else if (!RegExp(r'^\+2[0-9]{11}$').hasMatch(value)) {
+                return 'Enter valid phone number (+2 followed by 11 digits)';
+              } else {
+                return null;
+              }
+            },
+          ),
+
+          SizedBox(height: 24),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: CustomElevetedButton(
-                  text: 'Login',
-                  onPressed: () {
-                    if (globalKey.currentState!.validate()) {
-                      HapticFeedback.lightImpact();
-                      Fluttertoast.showToast(msg: 'Login button pressed');
-                      widget.onLoginPressed?.call();
-                    }
-                    widget.move!(true);
-                  },
-                  isLoading: widget.isLoading,
+              Text(
+                'Already Have Account ?',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
                 ),
               ),
-              SizedBox(width: 24),
-              Expanded(
-                child: CustomElevetedButton(
-                  text: 'Forgot password!',
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 24),
-
-          Row(
-            children: [
-              Expanded(
-                child: Divider(thickness: 2, indent: 50, color: Colors.grey),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              TextButton(
+                onPressed: () {
+                  widget.move!(true);
+                },
                 child: Text(
-                  'OR',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
                 ),
               ),
-
-              Expanded(
-                child: Divider(thickness: 2, endIndent: 50, color: Colors.grey),
-              ),
             ],
-          ),
-
-          SizedBox(height: 24),
-          // login by google Account Button
-          CustomElevetedButton(
-            text: 'Login With Google',
-            isGoogleButton: true,
-            onPressed: () {},
           ),
           SizedBox(height: 16),
 
           // Create Account Button
           CustomElevetedButton(
-            text: 'Create a new Account',
+            isLoading: isLoading,
+            text: 'Create Account',
             onPressed: () {
-              widget.move!(false);
               if (globalKey.currentState!.validate()) {
-                HapticFeedback.lightImpact();
-                Fluttertoast.showToast(msg: 'Login button pressed');
-                widget.onLoginPressed?.call();
+                widget.move!(true);
               }
             },
           ),
+
+          SizedBox(height: 24),
         ],
       ),
     );

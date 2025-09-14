@@ -1,24 +1,26 @@
 import 'dart:async';
 import 'package:animated_login/components/login_form.dart';
+import 'package:animated_login/components/register_form.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatefulWidget {
-  static const String routeName = '/loginscreen';
-  const LoginScreen({super.key});
+class AuthScreen extends StatefulWidget {
+  static const String routeName = '/authscreen';
+  const AuthScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  // ignore: library_private_types_in_public_api
+  _AuthScreenState createState() => _AuthScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with TickerProviderStateMixin {
+class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   late AnimationController _controller1;
   late AnimationController _controller2;
   late Animation<double> _animation1;
   late Animation<double> _animation2;
   late Animation<double> _animation3;
   late Animation<double> _animation4;
+  bool isLogin = true;
 
   @override
   void initState() {
@@ -71,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen>
       CurvedAnimation(parent: _controller2, curve: Curves.easeInOut),
     )..addListener(() => setState(() {}));
 
-    Timer(const Duration(seconds: 4), () => _controller1.forward());
+    Timer(const Duration(seconds: 2), () => _controller1.forward());
     _controller2.forward();
   }
 
@@ -80,6 +82,12 @@ class _LoginScreenState extends State<LoginScreen>
     _controller1.dispose();
     _controller2.dispose();
     super.dispose();
+  }
+
+  void smoothMove(bool flag) {
+    setState(() {
+      isLogin = flag;
+    });
   }
 
   @override
@@ -99,29 +107,53 @@ class _LoginScreenState extends State<LoginScreen>
                 _buildAnimatedCircles(size),
 
                 // Main content - ABOVE the circles
-                Positioned.fill(
-                  child: Column(
-                    children: [
-                      SizedBox(height: size.height * .1),
-                      Text(
-                        'Login',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white.withValues(alpha: .7),
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                          wordSpacing: 4,
+                isLogin
+                    ? Positioned.fill(
+                        child: Column(
+                          children: [
+                            SizedBox(height: size.height * .1),
+                            Text(
+                              'Login',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white.withValues(alpha: .7),
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                                wordSpacing: 4,
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: LoginForm(move: smoothMove),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Positioned.fill(
+                        child: Column(
+                          children: [
+                            SizedBox(height: size.height * .1),
+                            Text(
+                              'Register',
+                              style: GoogleFonts.poppins(
+                                color: Colors.white.withValues(alpha: .7),
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                                wordSpacing: 4,
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: RegisterForm(move: smoothMove),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: LoginForm(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
@@ -135,9 +167,9 @@ class _LoginScreenState extends State<LoginScreen>
       child: Stack(
         children: [
           Positioned(
-            top: size.height * (_animation2.value + .58),
+            top: size.height * (_animation2.value + .62),
             left: size.width * .21,
-            child: CustomPaint(painter: MyPainter(50)),
+            child: CustomPaint(painter: MyPainter(25)),
           ),
           Positioned(
             top: size.height * .98,
@@ -176,14 +208,37 @@ class MyPainter extends CustomPainter {
     final paint = Paint()
       ..shader = LinearGradient(
         colors: [
-          Colors.blue,
-          const Color(
-            0xffFD5E3D,
-          ).withValues(alpha: 0.50), // FIXED: use .withOpacity()
+          const Color(0xffFD5E3D).withValues(alpha: 0.1),
+
+          Colors.blue.withValues(alpha: 0.2),
+          const Color.fromARGB(255, 17, 17, 17).withValues(alpha: 0.6),
+
+          const Color(0xffFD5E3D).withValues(alpha: 0.4),
         ],
+
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ).createShader(Rect.fromCircle(center: Offset.zero, radius: radius));
+
+    // canvas.drawRRect(
+    //   RRect.fromRectAndRadius(
+    //     Rect.fromCenter(
+    //       center: Offset.zero,
+    //       width: radius * 2,
+    //       height: radius * 1.5,
+    //     ),
+    //     Radius.circular(radius * 0.3),
+    //   ),
+    //   paint,
+    // );
+    // canvas.drawOval(
+    //   Rect.fromCenter(
+    //     center: Offset.zero,
+    //     width: radius * 2,
+    //     height: radius * 1.2,
+    //   ),
+    //   paint,
+    // );
 
     canvas.drawCircle(Offset.zero, radius, paint);
   }
